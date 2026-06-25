@@ -1,0 +1,9 @@
+.env
+data/
+config/stocks.yaml
+config/backups/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/

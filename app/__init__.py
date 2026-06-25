@@ -1,0 +1,1 @@
+"""Personal stock watch agent."""

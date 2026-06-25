@@ -1,0 +1,65 @@
+stocks:
+  - symbol: "002299"
+    market: "A"
+    name: "圣农发展"
+    enabled: true
+    decision_mode: "rule"
+    valid_until: "2026-12-31"
+    max_invest_amount: 0
+    max_position_shares: 0
+    current_position_shares: 0
+    cost_price: 0
+    min_lot: 100
+    strategy_style: "demo_hold_only"
+    human_strategy_text: |
+      Demo 策略：只观察，不自动生成买卖动作。
+      未写入明确买卖条件时，默认不操作。
+    principles:
+      - "信号不明确时默认不买"
+      - "成本价只用于仓位和风险管理，不作为买卖理由"
+    buy_rules: []
+    sell_rules: []
+    hold_rule:
+      explanation_template: "Demo 策略未配置买卖规则，默认观察不动"
+
+  - symbol: "00700"
+    market: "HK"
+    name: "腾讯控股"
+    enabled: false
+    decision_mode: "rule"
+    valid_until: "2026-12-31"
+    max_invest_amount: 0
+    max_position_shares: 0
+    current_position_shares: 0
+    cost_price: 0
+    min_lot: 100
+    strategy_style: "hk_watch_example"
+    human_strategy_text: |
+      Demo 策略：港股行情接口测试示例，默认禁用。
+    principles:
+      - "未写入明确策略前不生成买卖动作"
+    buy_rules: []
+    sell_rules: []
+    hold_rule:
+      explanation_template: "港股示例未配置买卖规则，默认观察不动"
+
+  - symbol: "MSFT"
+    market: "US"
+    name: "Microsoft"
+    enabled: false
+    decision_mode: "rule"
+    valid_until: "2026-12-31"
+    max_invest_amount: 0
+    max_position_shares: 0
+    current_position_shares: 0
+    cost_price: 0
+    min_lot: 1
+    strategy_style: "us_watch_example"
+    human_strategy_text: |
+      Demo 策略：美股行情接口测试示例，默认禁用。
+    principles:
+      - "未写入明确策略前不生成买卖动作"
+    buy_rules: []
+    sell_rules: []
+    hold_rule:
+      explanation_template: "美股示例未配置买卖规则，默认观察不动"

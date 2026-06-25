@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>personal-stock-watch-agent</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>personal-stock-watch-agent</h1>
+      <div class="subtitle">本地半自动盯盘管理页，不自动下单</div>
+    </header>
+
+    <main>
+      <section>
+        <div class="section-title">
+          <h2>系统状态</h2>
+          <button id="refreshStatus">刷新状态</button>
+        </div>
+        <div id="status" class="status-grid"></div>
+      </section>
+
+      <section>
+        <div class="section-title">
+          <h2>股票监控列表</h2>
+          <button id="refreshStocks">刷新股票列表</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>enabled</th>
+                <th>symbol</th>
+                <th>name</th>
+                <th>market</th>
+                <th>持仓</th>
+                <th>成本</th>
+                <th>最大投入</th>
+                <th>有效期</th>
+                <th>策略风格</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="stocksBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section autocomplete="off">
+        <h2>新增/编辑股票策略</h2>
+        <div class="form-grid compact-form">
+          <label>股票代码<input id="formSymbol" name="symbol" placeholder="例如 002299" autocomplete="off" /></label>
+          <label>股票名称，可选<input id="formName" name="name" placeholder="例如 圣农发展" autocomplete="off" /></label>
+          <label>市场
+            <select id="formMarket" name="market" autocomplete="off">
+              <option value="A" selected>A</option>
+              <option value="HK">HK</option>
+              <option value="US">US</option>
+            </select>
+          </label>
+        </div>
+        <label class="wide-label">自然语言策略<textarea id="naturalStrategy" name="natural_strategy_text" rows="10" autocomplete="off" placeholder="请粘贴完整策略，例如：&#10;“圣农发展，当前7800股底仓，成本16.06，最大投入16.5万，4万元作为T仓子弹。未来2-3天，站回16.30并放量买1000股……”"></textarea></label>
+        <details class="advanced-fields">
+          <summary>展开高级字段</summary>
+          <div class="form-grid">
+            <label>最大投入<input id="formMaxInvest" type="number" min="0" autocomplete="off" /></label>
+            <label>最大持仓<input id="formMaxShares" type="number" min="0" autocomplete="off" /></label>
+            <label>当前持仓<input id="formCurrentShares" type="number" min="0" autocomplete="off" /></label>
+            <label>底仓<input id="formBaseShares" type="number" min="0" autocomplete="off" /></label>
+            <label>T仓<input id="formTShares" type="number" min="0" autocomplete="off" /></label>
+            <label>T仓预算<input id="formTCash" type="number" min="0" autocomplete="off" /></label>
+            <label>成本价<input id="formCost" type="number" min="0" step="0.001" autocomplete="off" /></label>
+            <label>最小手数<input id="formMinLot" type="number" min="1" value="100" autocomplete="off" /></label>
+            <label>有效期<input id="formValidUntil" placeholder="默认未来 7 天" autocomplete="off" /></label>
+          </div>
+        </details>
+        <div class="button-row">
+          <button id="parseStrategy">解析策略</button>
+          <button id="generateStrategy">生成 YAML 草稿</button>
+          <button id="validateStrategyFromForm">校验策略</button>
+          <button id="explainDraft">反译策略</button>
+          <button id="compareDraft">语义对比</button>
+          <button id="saveStrategy">保存到 stocks.yaml</button>
+          <button id="runDraftClose">运行一次 close</button>
+        </div>
+        <label class="wide-label">解析出的关键信息<pre id="parsedOutput"></pre></label>
+        <label class="wide-label">YAML 策略草稿<textarea id="yamlDraft" rows="18"></textarea></label>
+        <label class="wide-label">校验/反译/运行结果<pre id="strategyOutput"></pre></label>
+      </section>
+
+      <section>
+        <h2>运行控制</h2>
+        <div class="control-row">
+          <input id="runSymbol" placeholder="002299" />
+          <select id="runMode">
+            <option value="auto">auto</option>
+            <option value="close">close</option>
+            <option value="realtime">realtime</option>
+          </select>
+          <select id="runDecisionMode">
+            <option value="rule" selected>rule</option>
+            <option value="hybrid">hybrid</option>
+          </select>
+          <button id="runAll">运行全部 enabled</button>
+          <button id="runOne">运行一次</button>
+          <button id="runClose">收盘后运行</button>
+          <button id="testMarket">测试行情 close</button>
+          <button id="testScene">测试智能理解</button>
+          <button id="startScheduler">启动后台监控</button>
+          <button id="stopScheduler">停止后台监控</button>
+        </div>
+        <pre id="runOutput"></pre>
+      </section>
+
+      <section>
+        <div class="section-title">
+          <h2>最近信号记录</h2>
+          <button id="refreshSignals">刷新记录</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>时间</th>
+                <th>代码</th>
+                <th>名称</th>
+                <th>动作</th>
+                <th>股数</th>
+                <th>价格</th>
+                <th>规则</th>
+                <th>理由</th>
+                <th>通知</th>
+                <th>数据源</th>
+                <th>交易日</th>
+                <th>实时</th>
+              </tr>
+            </thead>
+            <tbody id="signalsBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
